@@ -1,6 +1,12 @@
 use std::{env, fs};
 
 fn main() -> Result<(), String> {
+    let input = ingest_file()?;
+
+    return Ok(());
+}
+
+fn ingest_file() -> Result<String, String> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
@@ -9,9 +15,8 @@ fn main() -> Result<(), String> {
 
     let input = fs::read_to_string(&args[1]);
 
-    if let Err(_) = input {
-        return Err("invalid input path".into());
+    match input {
+        Ok(data) => Ok(data),
+        Err(_) => Err("invalid input path".into()),
     }
-
-    return Ok(());
 }
