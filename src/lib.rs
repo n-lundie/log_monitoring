@@ -249,4 +249,20 @@ mod generate_report {
             Err(e) => panic!("Expected Ok, received: {}", e),
         }
     }
+    #[test]
+    fn should_return_error_on_process_without_start() {
+        let input = vec![CsvRow(
+            get_timestamp(11, 35, 23),
+            String::from("some description"),
+            String::from("END"),
+            String::from("37980"),
+        )];
+
+        let result = generate_report(&input);
+
+        match result {
+            Ok(_) => panic!("Expected Err, received Ok"),
+            Err(e) => assert_eq!(e, "process has no start log, line 1"),
+        }
+    }
 }
