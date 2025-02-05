@@ -16,4 +16,12 @@ cargo test
 ```bash
 cargo build --release 
 ```
-
+5. Copy the binary into the top level directory
+```bash
+cp target/release/log_monitoring log_monitoring
+```
+6. Run the application on the log file 
+```bash
+./log_monitoring ./logs.log
+```
+7. The report will be generated in the same directory that you run the command from. An example of this output can be in the `report.log` file in this repo
