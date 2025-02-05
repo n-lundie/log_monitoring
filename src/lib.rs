@@ -245,6 +245,10 @@ mod generate_report {
                 assert_eq!(report.processes_started, 4);
                 assert_eq!(report.processes_completed, 3);
                 assert_eq!(report.rows.len(), 2);
+                assert_eq!(report.rows[0].0, "57672");
+                assert_eq!(report.rows[0].1, "WARNING");
+                assert_eq!(report.rows[1].0, "81258");
+                assert_eq!(report.rows[1].1, "ERROR");
             }
             Err(e) => panic!("Expected Ok, received: {}", e),
         }
