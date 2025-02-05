@@ -41,7 +41,7 @@ fn parse_csv(input: String) -> Result<Vec<CsvRow>, String> {
         let input_columns: Vec<&str> = e.split(",").map(|e| e.trim()).collect();
 
         if input_columns.len() > 4 {
-            return Err(format!("unexpected column, line {}", i));
+            return Err(format!("unexpected column, line {}", i + 1));
         }
 
         // seperate timestamp into segments and try to parse to u32 otherwise return error
@@ -49,7 +49,7 @@ fn parse_csv(input: String) -> Result<Vec<CsvRow>, String> {
             .split(":")
             .map(|e| {
                 e.parse::<u32>()
-                    .map_err(|_| format!("invalid timestamp, line {}", i))
+                    .map_err(|_| format!("invalid timestamp, line {}", i + 1))
             })
             .collect::<Result<Vec<u32>, String>>()?;
 
@@ -58,7 +58,7 @@ fn parse_csv(input: String) -> Result<Vec<CsvRow>, String> {
         let status = input_columns[2].to_string();
 
         if status.ne("START") && status.ne("END") {
-            return Err(format!("invalid status, line {}", i));
+            return Err(format!("invalid status, line {}", i + 1));
         }
 
         data.push(CsvRow(
@@ -91,6 +91,41 @@ mod parse_csv {
         match result {
             Ok(e) => assert_eq!(e[0], expected_value),
             Err(e) => panic!("Expected Ok, received: {}", e),
+        }
+    }
+
+    #[test]
+    fn should_return_error_on_invalid_time() {
+        let input = String::from("11:35:23,scheduled task 032, START,37980\n11:35:5d,scheduled task 032, END,37980\n11:36:11,scheduled task 796, START,57672");
+        let result = parse_csv(String::from(input));
+
+        match result {
+            Ok(_) => panic!("Expected Err, receive Ok"),
+            Err(e) => assert_eq!(e, "invalid timestamp, line 2"),
+        }
+    }
+
+    #[test]
+    fn should_return_error_on_unexpected_column() {
+        let input = String::from("11:35:23,scheduled task 032, START,37980\n11:35:56,scheduled task 032, END,37980\n11:36:11,scheduled task 796, START,57672,bad column");
+        let result = parse_csv(String::from(input));
+
+        match result {
+            Ok(_) => panic!("Expected Err, receive Ok"),
+            Err(e) => assert_eq!(e, "unexpected column, line 3"),
+        }
+    }
+
+    #[test]
+    fn should_return_error_on_invalid_status() {
+        let input = String::from("11:35:23,scheduled task 032, START,37980\n11:35:56,scheduled task 032,not a status,37980\n11:36:11,scheduled task 796, START,57672");
+        let result = parse_csv(String::from(input));
+
+        match result {
+            Ok(_) => {
+                panic!("Expected Err, receive Ok")
+            }
+            Err(e) => assert_eq!(e, "invalid status, line 2"),
         }
     }
 }
