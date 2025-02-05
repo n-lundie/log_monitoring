@@ -1,5 +1,7 @@
 use std::{env, fs};
 
+use chrono::{DateTime, Utc};
+
 fn main() -> Result<(), String> {
     let input = ingest_file()?;
 
@@ -20,3 +22,8 @@ fn ingest_file() -> Result<String, String> {
         Err(_) => Err("invalid input path".into()),
     }
 }
+
+#[derive(PartialEq, Debug)]
+struct CsvRow(DateTime<Utc>, String, String, String);
+
+fn parse_csv(input: String) -> Result<Vec<CsvRow>, String> {}
