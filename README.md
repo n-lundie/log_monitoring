@@ -32,6 +32,6 @@ cp target/release/log_monitoring ./log_monitoring
 ## Areas For Improvement
 * Currently the application does not include jobs that started but did not finish in the report. A flag to enable a strict mode which would include such jobs should be added.
 * Reports are always generated within the current working directory. The user should be able to specify an output path.
-* Reports are always generated with the same name, causing existing reports to be overridden. Report file names should automatically increment to prevent this.
+* Reports are always generated with the same name, causing existing reports to be overwritten. Report file names should automatically increment to prevent this.
 * The order that alerts appear in the report is determined by the order in which alerts are generated. Options for sorting the report by level, PID or duration should be added.
 * The summary printed to the standard output should include the number of warnings and errors detected.
