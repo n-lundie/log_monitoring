@@ -25,7 +25,7 @@ pub fn ingest_file() -> Result<String, String> {
 /// * `1` a description of the process
 /// * `2` the status of the process ("START" or "END")
 /// * `3` the process id
-pub struct CsvRow(DateTime<Utc>, String, String, String);
+pub struct CsvRow(pub DateTime<Utc>, pub String, pub String, pub String);
 
 pub fn parse_csv(input: String) -> Result<Vec<CsvRow>, String> {
     let mut data = vec![];
@@ -130,9 +130,9 @@ fn get_timestamp(hour: u32, minute: u32, second: u32) -> DateTime<Utc> {
 
 #[derive(PartialEq, Debug)]
 pub struct Report {
-    processes_started: u32,
-    processes_completed: u32,
-    rows: Vec<ReportRow>,
+    pub processes_started: u32,
+    pub processes_completed: u32,
+    pub rows: Vec<ReportRow>,
 }
 
 #[derive(PartialEq, Debug)]
@@ -143,7 +143,7 @@ pub struct Report {
 /// * `0` the process id
 /// * `1` the level of alert ("WARNING" or "ERROR")
 /// * `2` duration of process in seconds
-pub struct ReportRow(String, String, i64);
+pub struct ReportRow(pub String, pub String, pub i64);
 
 pub fn generate_report(data: &Vec<CsvRow>) -> Result<Report, String> {
     let mut report = Report {
