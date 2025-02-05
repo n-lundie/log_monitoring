@@ -1,5 +1,5 @@
 use chrono::{DateTime, TimeZone, Utc};
-use std::{env, fs};
+use std::{collections::HashMap, env, fs};
 
 pub fn ingest_file() -> Result<String, String> {
     let args: Vec<String> = env::args().collect();
@@ -129,7 +129,7 @@ fn get_timestamp(hour: u32, minute: u32, second: u32) -> DateTime<Utc> {
 }
 
 #[derive(PartialEq, Debug)]
-struct Report {
+pub struct Report {
     processes_started: u32,
     processes_completed: u32,
     rows: Vec<ReportRow>,
@@ -143,14 +143,46 @@ struct Report {
 /// * `0` the process id
 /// * `1` the level of alert ("WARNING" or "ERROR")
 /// * `2` duration of process in seconds
-struct ReportRow(String, String, i64);
+pub struct ReportRow(String, String, i64);
 
-fn generate_report(data: &Vec<CsvRow>) -> Result<Report, String> {
+pub fn generate_report(data: &Vec<CsvRow>) -> Result<Report, String> {
     let mut report = Report {
         processes_started: 0,
         processes_completed: 0,
         rows: vec![],
     };
+
+    let mut store: HashMap<&String, &DateTime<Utc>> = HashMap::new();
+
+    for (i, row) in data.iter().enumerate() {
+        let CsvRow(timestamp, _desc, status, pid) = row;
+
+        if status.eq("END") {
+            let start = store
+                .get(pid)
+                .ok_or(format!("process has no start log, line {}", i + 1))?;
+
+            let diff = *timestamp - *start;
+
+            let duration = diff.num_seconds();
+
+            if duration > 600 {
+                report
+                    .rows
+                    .push(ReportRow(pid.clone(), String::from("ERROR"), duration));
+            } else if duration > 300 {
+                report
+                    .rows
+                    .push(ReportRow(pid.clone(), String::from("WARNING"), duration));
+            }
+
+            report.processes_completed += 1;
+        } else {
+            store.insert(pid, timestamp);
+
+            report.processes_started += 1;
+        }
+    }
 
     return Ok(report);
 }
