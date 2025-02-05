@@ -145,7 +145,15 @@ struct Report {
 /// * `2` duration of process in seconds
 struct ReportRow(String, String, i64);
 
-fn generate_report(data: &Vec<CsvRow>) -> Result<Report, String> {}
+fn generate_report(data: &Vec<CsvRow>) -> Result<Report, String> {
+    let mut report = Report {
+        processes_started: 0,
+        processes_completed: 0,
+        rows: vec![],
+    };
+
+    return Ok(report);
+}
 
 #[cfg(test)]
 mod generate_report {
