@@ -146,3 +146,67 @@ struct Report {
 struct ReportRow(String, String, i64);
 
 fn generate_report(data: &Vec<CsvRow>) -> Result<Report, String> {}
+
+#[cfg(test)]
+mod generate_report {
+    use super::*;
+
+    #[test]
+    fn should_return_report_on_valid_data() {
+        let input = vec![
+            CsvRow(
+                get_timestamp(11, 35, 23),
+                String::from("some description"),
+                String::from("START"),
+                String::from("37980"),
+            ),
+            CsvRow(
+                get_timestamp(11, 35, 56),
+                String::from("some description"),
+                String::from("END"),
+                String::from("37980"),
+            ),
+            CsvRow(
+                get_timestamp(11, 36, 11),
+                String::from("some description"),
+                String::from("START"),
+                String::from("57672"),
+            ),
+            CsvRow(
+                get_timestamp(11, 36, 58),
+                String::from("some description"),
+                String::from("START"),
+                String::from("81258"),
+            ),
+            CsvRow(
+                get_timestamp(11, 42, 18),
+                String::from("some description"),
+                String::from("END"),
+                String::from("57672"),
+            ),
+            CsvRow(
+                get_timestamp(11, 43, 58),
+                String::from("some description"),
+                String::from("START"),
+                String::from("39547"),
+            ),
+            CsvRow(
+                get_timestamp(11, 56, 58),
+                String::from("some description"),
+                String::from("END"),
+                String::from("81258"),
+            ),
+        ];
+
+        let result = generate_report(&input);
+
+        match result {
+            Ok(report) => {
+                assert_eq!(report.processes_started, 4);
+                assert_eq!(report.processes_completed, 3);
+                assert_eq!(report.rows.len(), 2);
+            }
+            Err(e) => panic!("Expected Ok, received: {}", e),
+        }
+    }
+}
