@@ -127,3 +127,22 @@ fn get_timestamp(hour: u32, minute: u32, second: u32) -> DateTime<Utc> {
     // logs do not provide year, month or day so we provide defaults
     return Utc.with_ymd_and_hms(0, 1, 1, hour, minute, second).unwrap();
 }
+
+#[derive(PartialEq, Debug)]
+struct Report {
+    processes_started: u32,
+    processes_completed: u32,
+    rows: Vec<ReportRow>,
+}
+
+#[derive(PartialEq, Debug)]
+/// Represents a row to be included in report  
+///
+/// # Fields
+///
+/// * `0` the process id
+/// * `1` the level of alert ("WARNING" or "ERROR")
+/// * `2` duration of process in seconds
+struct ReportRow(String, String, i64);
+
+fn generate_report(data: &Vec<CsvRow>) -> Result<Report, String> {}
