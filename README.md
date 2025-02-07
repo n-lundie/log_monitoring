@@ -29,6 +29,17 @@ cp target/release/log_monitoring ./log_monitoring
 ```
 7. The report will be generated in the same directory that you run the command from. An example of this output can be seen in the [report.log](https://github.com/n-lundie/log_monitoring/blob/main/report.log) file in this repo. Each line in the report contains the **PID**, **alert level** and **duration** of the job that triggered the alert.
 
+## Docker
+To run the application in a Docker container, ensure you have Docker installed and then from within the project directory run the following:
+1. Build the image
+```bash
+docker built -t log_monitoring .
+```
+2. Run the image
+```bash
+docker run -v $(pwd):/run --rm log_monitoring ./logs.log 
+```
+
 ## Areas For Improvement
 * Currently the application does not include jobs that started but did not finish in the report. A flag to enable a strict mode which would include such jobs should be added.
 * Reports are always generated within the current working directory. The user should be able to specify an output path.
