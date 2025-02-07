@@ -33,7 +33,7 @@ cp target/release/log_monitoring ./log_monitoring
 To run the application in a Docker container, ensure you have Docker installed and then from within the project directory run the following:
 1. Build the image
 ```bash
-docker built -t log_monitoring .
+docker build -t log_monitoring .
 ```
 2. Run the image
 ```bash
